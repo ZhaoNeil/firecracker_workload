@@ -1,0 +1,4 @@
+.metals
+.vscode
+java/Tomcat/target/*
+java/Tomcat/tomcat*
