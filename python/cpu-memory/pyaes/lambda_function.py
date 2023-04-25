@@ -1,5 +1,6 @@
 from time import time
 import random
+import sys
 import string
 import pyaes
 
@@ -9,10 +10,7 @@ def generate(length):
     return ''.join(random.choice(letters) for i in range(length))
 
 
-def lambda_handler(event, context):
-    length_of_message = event['length_of_message']
-    num_of_iterations = event['num_of_iterations']
-
+def lambda_handler(length_of_message, num_of_iterations):
     message = generate(length_of_message)
 
     # 128-bit key (16 bytes)
@@ -22,12 +20,16 @@ def lambda_handler(event, context):
     for loops in range(num_of_iterations):
         aes = pyaes.AESModeOfOperationCTR(KEY)
         ciphertext = aes.encrypt(message)
-        print(ciphertext)
 
         aes = pyaes.AESModeOfOperationCTR(KEY)
         plaintext = aes.decrypt(ciphertext)
-        print(plaintext)
         aes = None
 
     latency = time() - start
     return latency
+
+if __name__ == "__main__":
+    length_of_message = int(sys.argv[1])
+    num_of_iterations = int(sys.argv[2])
+    result = lambda_handler(length_of_message, num_of_iterations)
+    print(result)

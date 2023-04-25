@@ -2,3 +2,5 @@
 .vscode
 java/Tomcat/target/*
 java/Tomcat/tomcat*
+python/cpu-memory/image_processing/tmp/*
+python/cpu-memory/video_processing/tmp/*

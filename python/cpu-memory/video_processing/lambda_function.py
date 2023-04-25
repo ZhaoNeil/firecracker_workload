@@ -1,17 +1,11 @@
-import boto3
-import uuid
 from time import time
 import cv2
 
-s3_client = boto3.client('s3')
-
-tmp = "/tmp/"
-FILE_NAME_INDEX = 0
-FILE_PATH_INDEX = 2
+tmp = "tmp/"
 
 
-def video_processing(object_key, video_path):
-    file_name = object_key.split(".")[FILE_NAME_INDEX]
+def video_processing(video_path):
+    file_name = video_path[:-4]
     result_file_path = tmp+file_name+'-output.avi'
 
     video = cv2.VideoCapture(video_path)
@@ -41,18 +35,7 @@ def video_processing(object_key, video_path):
     out.release()
     return latency, result_file_path
 
-
-def lambda_handler(event, context):
-    input_bucket = event['input_bucket']
-    object_key = event['object_key']
-    output_bucket = event['output_bucket']
-
-    download_path = tmp+'{}{}'.format(uuid.uuid4(), object_key)
-
-    s3_client.download_file(input_bucket, object_key, download_path)
-
-    latency, upload_path = video_processing(object_key, download_path)
-
-    s3_client.upload_file(upload_path, output_bucket, upload_path.split("/")[FILE_PATH_INDEX])
-
-    return latency
+if __name__ == "__main__":
+    video_path = "earth_3MG.mp4"
+    latency, path = video_processing(video_path)
+    print(latency, path)

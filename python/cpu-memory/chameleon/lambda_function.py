@@ -1,5 +1,6 @@
 from time import time
 import six
+import sys
 import json
 from chameleon import PageTemplate
 
@@ -17,10 +18,7 @@ tal:content="python: d" />
 </table>""" % six.text_type.__name__
 
 
-def lambda_handler(event, context):
-    num_of_rows = event['num_of_rows']
-    num_of_cols = event['num_of_cols']
-
+def lambda_handler(num_of_rows, num_of_cols):
     start = time()
     tmpl = PageTemplate(BIGTABLE_ZPT)
 
@@ -34,5 +32,11 @@ def lambda_handler(event, context):
     data = tmpl.render(options=options)
     latency = time() - start
 
-    result = json.dumps({'latency': latency, 'data': data})
+    result = json.dumps({'latency': latency})
     return result
+
+if __name__ == "__main__":
+    num_of_rows = int(sys.argv[1])
+    num_of_cols = int(sys.argv[2])
+    result = lambda_handler(num_of_rows, num_of_cols)
+    print(result)

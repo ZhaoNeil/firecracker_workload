@@ -1,16 +1,10 @@
-import boto3
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.externals import joblib
 
 import pandas as pd
 from time import time
 import re
 import io
-
-
-s3_client = boto3.client('s3')
 
 cleanup_re = re.compile('[^a-z]+')
 tmp = '/tmp/'
@@ -22,14 +16,8 @@ def cleanup(sentence):
     return sentence
 
 
-def lambda_handler(event, context):
-    dataset_bucket = event['dataset_bucket']
-    dataset_object_key = event['dataset_object_key']
-    model_bucket = event['model_bucket']
-    model_object_key = event['model_object_key']  # example : lr_model.pk
-
-    obj = s3_client.get_object(Bucket=dataset_bucket, Key=dataset_object_key)
-    df = pd.read_csv(io.BytesIO(obj['Body'].read()))
+def lambda_handler(csv_path):
+    df = pd.read_csv(csv_path, on_bad_lines='skip')
 
     start = time()
     df['train'] = df['Text'].apply(cleanup)
@@ -42,9 +30,9 @@ def lambda_handler(event, context):
     model.fit(train, df['Score'])
     latency = time() - start
 
-    model_file_path = tmp + model_object_key
-    joblib.dump(model, model_file_path)
-
-    s3_client.upload_file(model_file_path, model_bucket, model_object_key)
-
     return latency
+
+if __name__ == "__main__":
+    csv_path = "data.csv"
+    result = lambda_handler(csv_path)
+    print(result)
