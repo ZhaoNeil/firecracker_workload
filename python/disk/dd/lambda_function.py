@@ -1,6 +1,7 @@
 import subprocess
+import sys
 
-tmp = '/tmp'
+tmp = 'tmp/'
 
 """
 dd - convert and copy a file
@@ -19,16 +20,20 @@ Options
 """
 
 
-def lambda_handler(event, context):
-    bs = 'bs='+event['bs']
-    count = 'count='+event['count']
+def lambda_handler(bs, count):
 
     out_fd = open(tmp + '/io_write_logs', 'w')
-    dd = subprocess.Popen(['dd', 'if=/dev/zero', 'of=/tmp/out', bs, count], stderr=out_fd)
+    dd = subprocess.Popen(['dd', 'if=/dev/zero', 'of=tmp/out', bs, count], stderr=out_fd)
     dd.communicate()
     
     subprocess.check_output(['ls', '-alh', tmp])
 
     with open(tmp + '/io_write_logs') as logs:
-        result = str(logs.readlines()[2]).replace('\n', '')
+        result = str(logs.readlines()).replace('\n', '')
         return result
+
+if __name__ == "__main__":
+   bs = str(sys.argv[1])
+   count = str(sys.argv[2])
+   result = lambda_handler(bs, count)
+   print(result)

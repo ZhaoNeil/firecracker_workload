@@ -4,3 +4,7 @@ java/Tomcat/target/*
 java/Tomcat/tomcat*
 python/cpu-memory/image_processing/tmp/*
 python/cpu-memory/video_processing/tmp/*
+python/disk/gzip_compression/tmp/*
+python/disk/random_disk_io/tmp/*
+python/disk/sequential_disk_io/tmp/*
+python/disk/dd/tmp/*
