@@ -12,7 +12,7 @@ java [Tomcat](https://devcenter.heroku.com/articles/create-a-java-web-applicatio
 ```
 cd Tomcat
 mvn package
-sh target/bin/webapp   
+sh target/bin/webapp & sleep 30; kill $!
 ```
 ## Not included workloads:
 ### cpu-memory:
