@@ -18,4 +18,4 @@ sh target/bin/webapp & sleep 30; kill $!
 ### cpu-memory:
 feature_generation, mapreduce, model_serving
 ### network:
-s3_download_upload
+s3_download_upload, iPerf
